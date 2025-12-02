@@ -217,7 +217,34 @@ ggplot(grades_trimester, aes(x = grade, color = factor(trimester), fill = factor
   theme_minimal()
 ```
 
+# Attendance Analysis
 
+### Question 13
+
+```{r}
+grades_per_student <- grades |>
+  filter(!is.na(grade)) |>            
+  count(id, name = "n_grades") |>     
+  left_join(students, by = "id") |>   
+  select(id, group, sex, n_grades) |> 
+  arrange(id)
+
+grades_per_student |>
+  slice_head(n = 10) |>
+  knitr::kable(caption = "First 10 Students: Number of Grades per Student")
+```
+
+```{r}
+summary_stats <- grades_per_student |>
+  summarise(
+    minimum = min(n_grades),
+    maximum = max(n_grades),
+    average = mean(n_grades),
+    median  = median(n_grades)
+  )
+
+knitr::kable(summary_stats, caption = "Summary Statistics of Grades per Student")
+```
 
 
 
