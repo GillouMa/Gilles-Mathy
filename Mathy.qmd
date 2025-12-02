@@ -164,10 +164,58 @@ oldest_per_group <- students |>
 kable(oldest_per_group, caption = "Oldest Student in Each Group")
 ```
 
+# 3 Simple Grade Analysis
 
+### Question 10 
 
+```{r}
+n_grades <- sum(!is.na(grades$grade))
+```
 
+The data set contains `r n_grades` grades.
 
+### Question 11
+
+```{r}
+crypto_id <- courses |>
+  filter(course == "Cryptography and Codebreaking") |>
+  pull(course_id)
+
+crypto_group_avg <- grades |>
+  filter(course_id == crypto_id, !is.na(grade)) |>   
+  left_join(students, by = "id") |>                  
+  group_by(group) |>
+  summarise(avg_crypto = mean(grade)) |>
+  arrange(group)
+
+ggplot(crypto_group_avg, aes(x = factor(group), y = avg_crypto)) +
+  geom_col(fill = "steelblue") +
+  labs(
+    title = "Average Grade in Cryptography and Codebreaking by Group",
+    x = "Group",
+    y = "Average Grade"
+  ) +
+  theme_minimal()
+```
+
+### Question 12
+
+```{r}
+grades_trimester <- grades |>
+  left_join(courses, by = "course_id") |> 
+  filter(!is.na(grade))  
+
+ggplot(grades_trimester, aes(x = grade, color = factor(trimester), fill = factor(trimester))) +
+  geom_density(alpha = 0.3) +
+  labs(
+    title = "Distribution of Grades by Trimester",
+    x = "Grade",
+    y = "Density",
+    color = "Trimester",
+    fill  = "Trimester"
+  ) +
+  theme_minimal()
+```
 
 
 
