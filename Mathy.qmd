@@ -135,7 +135,31 @@ ggplot(students, aes(x = age)) +
   theme_minimal()
 ```
 
+### Question 8
 
+```{r}
+median_age_group <- students |>
+  group_by(group) |>
+  summarise(
+    median_age = round(median(age), 0)
+  ) |>
+  arrange(group)
+
+kable(median_age_group, caption = "Median Age of Students per Group")
+```
+
+### Question 9
+
+```{r}
+oldest_per_group <- students |>
+  group_by(group) |>
+  slice_max(age, n = 1, with_ties = FALSE) |>   # pick the oldest student
+  ungroup() |>
+  select(group, id, sex, age) |>                # keep only needed columns
+  arrange(desc(age))                            # sort by age decreasing
+
+kable(oldest_per_group, caption = "Oldest Student in Each Group")
+```
 
 
 
