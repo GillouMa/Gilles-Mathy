@@ -97,7 +97,43 @@ ggplot(students_per_group, aes(x = factor(group), y = n)) +
   theme_minimal()
 ```
 
+### Question 6
 
+```{r}
+gender_group <- students |>
+  count(group, sex)
+
+ggplot(gender_group, aes(x = factor(group), y = n, fill = sex)) +
+  geom_col(position = "fill") +
+  labs(
+    title = "Gender Balance per Group (Proportion)",
+    x = "Group",
+    y = "Proportion",
+    fill = "Sex"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_minimal()
+```
+
+### Question 7
+
+```{r}
+library(lubridate)
+
+students <- students |>
+  mutate(
+    age = round(time_length(today() - birth_date, unit = "year"))
+  )
+
+ggplot(students, aes(x = age)) +
+  geom_histogram(binwidth = 1, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Student Ages",
+    x = "Age (years)",
+    y = "Number of Students"
+  ) +
+  theme_minimal()
+```
 
 
 
