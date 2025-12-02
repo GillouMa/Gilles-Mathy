@@ -387,9 +387,106 @@ avg_grade_wide |>
   kable(caption = "Average grades per student (extract with two courses)")
 ```
 
+### Question 20
+
+```{r}
+two_courses <- avg_grade_wide |>
+  select(
+    id,
+    `Historical Archaeology and Antiquarian Studies`,
+    `Etiquette and Social Graces`
+  ) |>
+  rename(
+    hist = `Historical Archaeology and Antiquarian Studies`,
+    etiqu = `Etiquette and Social Graces`
+  ) |>
+  tidyr::drop_na(hist, etiqu)
+
+ggplot(two_courses, aes(x = etiqu, y = hist)) +
+  geom_point(alpha = 0.5, size = 2.2, color = "steelblue") +
+  geom_smooth(method = "lm", se = FALSE, color = "darkred", linetype = "dashed") +
+  labs(
+    title = "Relationship Between Course Averages",
+    subtitle = "Historical Archaeology and Antiquarian Studies (HAAS) vs Etiquette and Social Graces",
+    x = "Average Grade in Etiquette and Social Graces",
+    y = "Average Grade in HAAS"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    panel.grid.minor = element_blank()
+  )
+```
+
+###Question 21
+
+```{r}
+correlations_by_group <- avg_grade_wide %>%
+  group_by(group) %>%
+  summarise(
+    correlation = cor(`Fashion Design and Textile Innovation`,
+                      `Electrical Engineering and Telegraphy`,
+                      use = "complete.obs")
+  )
+
+correlations_by_group %>%
+  slice_head(n = 10) %>%
+  knitr::kable(digits = 3)
+```
+
+### Question 22
+
+```{r}
+target_group <- correlations_by_group |>
+  slice_max(abs(correlation)) |>
+  pull(group)
+
+data_q22 <- avg_grade_wide |>
+  filter(group == target_group)
+
+ggplot(data_q22, aes(
+  x = `Electrical Engineering and Telegraphy`,
+  y = `Fashion Design and Textile Innovation`
+)) +
+  geom_point(alpha = 0.7, size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "blue", linewidth = 1) +
+  labs(
+    title = paste(
+      "Fashion vs Electrical Grades in Group", target_group
+    ),
+    x = "Average Grade in Electrical Engineering and Telegraphy",
+    y = "Average Grade in FDTI"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+### Question 23
+
+```{r}
+course_cols <- names(avg_grade_wide)[
+  !(names(avg_grade_wide) %in% c("id", "group"))
+]
+
+final_grade_df <- avg_grade_wide |>
+  rowwise() |>
+  mutate(final_grade = mean(c_across(all_of(course_cols)))) |>
+  ungroup()
+
+final_grade_df <- final_grade_df |>
+  left_join(students |> select(id, sex), by = "id") |>
+  select(id, group, sex, final_grade)
+
+final_grade_df <- final_grade_df |>
+  arrange(desc(final_grade))
+
+final_grade_df |>
+  slice_head(n = 5) |>
+  knitr::kable()
+```
 
 
-
+### Question 24
 
 
 
