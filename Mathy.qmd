@@ -488,12 +488,121 @@ final_grade_df |>
 
 ### Question 24
 
+```{r}
+ggplot(final_grade_df, aes(x = factor(group), y = final_grade)) +
+  geom_boxplot(fill = "steelblue", alpha = 0.7) +
+  labs(
+    title = "Distribution of Final Grades by Group",
+    x = "Group",
+    y = "Final Grade"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+### Question 25
+
+```{r}
+ggplot(final_grade_df, aes(x = factor(group), y = final_grade, fill = sex)) +
+  geom_boxplot(alpha = 0.7, outlier.size = 1.5) +
+  labs(
+    title = "Final Grades by Group and Sex",
+    x = "Group",
+    y = "Final Grade",
+    fill = "Sex"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
 
 
+### Question 26
+
+```{r}
+trimester1 <- c(
+  "Steam Engine Mechanics and Engineering",
+  "Cryptography and Codebreaking",
+  "Victorian Literature and Social Commentary"
+)
+
+trimester2 <- c(
+  "Electrical Engineering and Telegraphy",
+  "Etiquette and Social Graces",
+  "Historical Archaeology and Antiquarian Studies"
+)
+
+trimester3 <- c(
+  "Airship Piloting and Navigation",
+  "Alchemy and Chemical Engineering",
+  "Clockwork Automata and Robotics",
+  "Fashion Design and Textile Innovation"
+)
+
+pass_df <- avg_grade_wide |>
+  mutate(
+    
+    min_course_grade = apply(across(all_of(course_cols)), 1, min),
+
+    avg_trimester1 = rowMeans(across(all_of(trimester1))),
+    avg_trimester2 = rowMeans(across(all_of(trimester2))),
+    avg_trimester3 = rowMeans(across(all_of(trimester3))),
+
+  
+    pass = min_course_grade >= 5 &
+           avg_trimester1 >= 10 &
+           avg_trimester2 >= 10 &
+           avg_trimester3 >= 10
+  ) |>
+  select(id, group, pass)
+
+pass_df <- pass_df |>
+  left_join(final_grade_df |> select(id, final_grade), by = "id") |>
+  select(id, group, final_grade, pass)
+
+pass_df |>
+  slice_head(n = 5) |>
+  knitr::kable()
+```
 
 
+### Question 27
 
+```{r}
+n_non_passing_final10 <- pass_df |>
+  filter(pass == FALSE, final_grade >= 10) |>
+  nrow()
 
+```
+
+The number of students who do not pass but still have a final grade of at least 10 is
+`r n_non_passing_final10`.
+
+### Question 28
+
+```{r}
+pass_rate_group <- pass_df |>
+  group_by(group) |>
+  summarize(pass_rate = mean(pass) * 100)
+
+ggplot(pass_rate_group, aes(x = factor(group), y = pass_rate)) +
+  geom_col(fill = "steelblue") +
+  labs(
+    title = "Pass Rate per Group",
+    x = "Group",
+    y = "Pass Rate (%)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
 
 
 
