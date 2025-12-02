@@ -1,0 +1,68 @@
+---
+title: "Mathy"
+author: "Gilles Mathy"
+format: html
+editor: visual
+---
+
+```{r}
+library(here)
+library(readr)
+```
+```{r}
+here::i_am("Gilles-Mathy.Rproj")
+```
+### Question 1
+```{r}
+courses <- read_csv(here("courses.csv"))
+grades  <- read_csv(here("grades.csv"))
+students <- read_csv(here("students.csv"))
+```
+
+```{r}
+grades <- read_delim(
+  here("grades.csv"),
+  delim = ";",
+  col_types = cols(
+    id        = col_integer(),
+    course_id = col_integer(),
+    grade     = col_double()
+  ),
+  show_col_types = FALSE
+)
+```
+
+```{r}
+spec(grades)      
+head(grades)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
