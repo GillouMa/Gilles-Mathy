@@ -308,6 +308,104 @@ ggplot(car_grade_distribution, aes(x = factor(n_grades_car),
   )
 ```
 
+### Question 17
+
+```{r}
+ggplot(car_grades_per_student,
+       aes(x = factor(group), fill = factor(n_grades_car))) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Share of CAR Grades per Group",
+    x = "Group",
+    y = "Share of Students",
+    fill = "Grades"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5)
+  )
+```
+
+### Question 18 
+
+```{r}
+car_grades_per_student_sex <- grades |>
+  filter(course_id == car_id, !is.na(grade)) |>
+  count(id, name = "n_grades_car") |>
+  left_join(students, by = "id") |>
+  select(id, group, sex, n_grades_car) |>
+  arrange(id)
+
+ggplot(car_grades_per_student_sex,
+       aes(x = factor(group), fill = factor(n_grades_car))) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  facet_wrap(~ sex) +
+  labs(
+    title = "Share of CAR Grades per Group by Sex",
+    x = "Group",
+    y = "Share of Students",
+    fill = "Grades"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5)
+  )
+```
+
+# 5 Grade Analysis
+
+### Question 19
+
+```{r}
+library(tidyr)
+
+avg_grade_student_course <- grades |>
+  filter(!is.na(grade)) |>
+  left_join(students, by = "id") |>
+  left_join(courses,  by = "course_id") |>
+  group_by(id, group, course) |>
+  summarise(avg_grade = mean(grade), .groups = "drop")
+
+avg_grade_wide <- avg_grade_student_course |>
+  pivot_wider(
+    names_from  = course,
+    values_from = avg_grade
+  )
+
+avg_grade_wide |>
+  select(
+    id,
+    group,
+    `Airship Piloting and Navigation`,
+    `Alchemy and Chemical Engineering`
+  ) |>
+  slice_head(n = 5) |>
+  kable(caption = "Average grades per student (extract with two courses)")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
