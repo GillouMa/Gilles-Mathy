@@ -16,7 +16,6 @@ here::i_am("Gilles-Mathy.Rproj")
 ```{r}
 courses <- read_csv(here("courses.csv"))
 grades  <- read_csv(here("grades.csv"))
-students <- read_csv(here("students.csv"))
 ```
 
 ```{r}
@@ -55,8 +54,24 @@ courses |>
 
 ```
 
+## 1.2 Students
 
+### Question 3
 
+```{r}
+students <- read_csv(
+  here("students.csv"),
+  col_types = cols(
+    id         = col_integer(),
+    group      = col_factor(),
+    birth_date = col_date(format = "%Y-%m-%d"),
+    sex        = col_factor()
+  )
+)
+```
+
+The `birth_date` column of the `students` data frame is of class `r class(students$birth_date)`.
+The `sex` column of the `students` data frame is of class `r class(students$sex)`
 
 
 
