@@ -246,9 +246,67 @@ summary_stats <- grades_per_student |>
 knitr::kable(summary_stats, caption = "Summary Statistics of Grades per Student")
 ```
 
+### Question 14
+
+```{r}
+ggplot(grades_per_student, aes(x = n_grades, color = sex, fill = sex)) +
+  geom_density(alpha = 0.3) +
+  labs(
+    title = "Distribution of the Number of Grades by Sex",
+    x = "Number of Grades",
+    y = "Density",
+    color = "Sex",
+    fill = "Sex"
+  ) +
+  theme_minimal()
+```
+
+### Question 15
+
+```{r}
+car_id <- courses |>
+  filter(course == "Clockwork Automata and Robotics") |>
+  pull(course_id)
+
+car_grades_per_student <- grades |>
+  filter(course_id == car_id, !is.na(grade)) |>   
+  count(id, name = "n_grades_car") |>             
+  left_join(students, by = "id") |>               
+  select(id, group, n_grades_car) |>              
+  arrange(id)
+
+car_grades_per_student |>
+  slice_head(n = 10) |>
+  knitr::kable(caption = "First 10 Students: Number of Grades in Clockwork Automata and Robotics")
+```
 
 
+### Question 16
 
+```{r}
+car_grade_distribution <- car_grades_per_student |>
+  count(n_grades_car, name = "n_students") |>
+  arrange(n_grades_car)
+
+ggplot(car_grade_distribution, aes(x = factor(n_grades_car),
+                                   y = n_students)) +
+  geom_col(fill = "steelblue", width = 0.7) +
+  geom_text(aes(label = n_students),
+            vjust = -0.5,
+            size = 4) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(
+    title = "Distribution of Number of Grades\nin Clockwork Automata and Robotics",
+    x = "Number of Grades per Student",
+    y = "Number of Students"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12)
+  )
+```
 
 
 
