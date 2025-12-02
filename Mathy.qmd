@@ -72,6 +72,30 @@ grades <- read_delim(
 )
 ```
 
+# Student Population Analysis
+
+### Question 5
+
+```{r}
+library(ggplot2)
+
+students <- students |>
+  mutate(
+    group = as.integer(as.character(group))   
+  )
+
+students_per_group <- students |>
+  count(group)
+
+ggplot(students_per_group, aes(x = factor(group), y = n)) +
+  geom_col(fill = "steelblue") +
+  labs(
+    title = "Number of Students per Group",
+    x = "Group",
+    y = "Number of Students"
+  ) +
+  theme_minimal()
+```
 
 
 
