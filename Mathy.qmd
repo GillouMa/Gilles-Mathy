@@ -37,8 +37,23 @@ spec(grades)
 head(grades)
 ```
 
+### Question 2
 
+```{r}
+library(dplyr)
+library(knitr)
 
+courses |>
+  arrange(course) |> 
+  rename(
+    "course name"      = course,
+    "identifier"       = course_id,
+    "trimester"        = trimester,
+    "number of grades" = nb_grades
+  ) |>
+  kable()
+
+```
 
 
 
