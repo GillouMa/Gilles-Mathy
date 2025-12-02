@@ -15,25 +15,6 @@ here::i_am("Gilles-Mathy.Rproj")
 ### Question 1
 ```{r}
 courses <- read_csv(here("courses.csv"))
-grades  <- read_csv(here("grades.csv"))
-```
-
-```{r}
-grades <- read_delim(
-  here("grades.csv"),
-  delim = ";",
-  col_types = cols(
-    id        = col_integer(),
-    course_id = col_integer(),
-    grade     = col_double()
-  ),
-  show_col_types = FALSE
-)
-```
-
-```{r}
-spec(grades)      
-head(grades)
 ```
 
 ### Question 2
@@ -73,6 +54,23 @@ students <- read_csv(
 The `birth_date` column of the `students` data frame is of class `r class(students$birth_date)`.
 The `sex` column of the `students` data frame is of class `r class(students$sex)`
 
+## 1.3 Grades
+
+### Question 4 
+
+```{r}
+grades <- read_delim(
+  here("grades.csv"),
+  delim = ";",
+  na = "unknown",
+  col_types = cols(
+    id        = col_integer(),
+    course_id = col_integer(),
+    grade     = col_double()
+  ),
+  show_col_types = FALSE
+)
+```
 
 
 
