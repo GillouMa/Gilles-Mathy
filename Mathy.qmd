@@ -1,7 +1,12 @@
 ---
 title: "Mathy"
 author: "Gilles Mathy"
-format: html
+format: 
+  html :
+    code-fold: false
+    warning: false
+    message: false
+    echo: true
 editor: visual
 ---
 
@@ -604,9 +609,70 @@ ggplot(pass_rate_group, aes(x = factor(group), y = pass_rate)) +
   )
 ```
 
+### Question 29 
 
+```{r}
+course_failures <- grades |>
+  filter(grade < 5) |>
+  count(course_id) |>
+  arrange(desc(n))
 
+course_names <- tibble(
+  course_id = 1:10,
+  course_name = c(
+    "Airship Piloting and Navigation",
+    "Alchemy and Chemical Engineering",
+    "Clockwork Automata and Robotics",
+    "Cryptography and Codebreaking",
+    "Electrical Engineering and Telegraphy",
+    "Etiquette and Social Graces",
+    "Fashion Design and Textile Innovation",
+    "Historical Archaeology and Antiquarian Studies",
+    "Steam Engine Mechanics and Engineering",
+    "Victorian Literature and Social Commentary"
+  )
+)
 
+course_failures_named <- course_failures |>
+  left_join(course_names, by = "course_id") |>
+  select(course_id, course_name, failures = n)
+
+worst_course <- course_failures_named |>
+  slice_max(failures, n = 1)
+
+knitr::kable(worst_course)
+```
+
+### Question 30
+
+```{r}
+pass_age_df <- pass_df |>
+  left_join(students |> select(id, age), by = "id")
+
+success_by_age <- pass_age_df |>
+  group_by(age) |>
+  summarise(
+    success_rate = mean(pass),   
+    n = n()                      
+  )
+
+ggplot(success_by_age, aes(x = factor(age), y = success_rate)) +
+  geom_col(fill = "steelblue") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                     expand = expansion(mult = c(0, 0.05))) +
+  labs(
+    title = "Success Rate by Age",
+    x = "Age",
+    y = "Success Rate"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+There does not seem to be any particular effect of age on the success rate. The graph does clearly highly something like "Being older is associated with a higher success rate", maybe just very slightly. 
 
 
 
